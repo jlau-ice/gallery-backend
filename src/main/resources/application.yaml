@@ -28,8 +28,8 @@ knife4j:
     title: 接口文档
     version: 1.0
     group:
-      test1:
-        group-name: 默认分组
+      default:
+        group-name:
         api-rule: package
         api-rule-resources:
           - com.carbon.controller
