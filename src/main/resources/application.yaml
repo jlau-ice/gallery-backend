@@ -9,4 +9,27 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://192.168.172.94:3306/galley?useSSL=false&useUnicode=true&characterEncoding=UTF-8&allowPublicKeyRetrieval=true &serverTimezone=GMT%2B8&allowMultiQueries=true
-
+mybatis-plus:
+  configuration:
+    # 驼峰命名
+    map-underscore-to-camel-case: false
+    # 日志
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+      db-config:
+        # 逻辑删除
+        logic-delete-value: is_delete
+        logic-delete-field: 1 # 以删除
+        logic-not-delete-value: 0 # 逻辑未删除
+# 接口文档
+knife4j:
+  enable: true
+  openapi:
+    title: 接口文档
+    version: 1.0
+    group:
+      test1:
+        group-name: 默认分组
+        api-rule: package
+        api-rule-resources:
+          - com.carbon.controller
