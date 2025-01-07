@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @SpringBootApplication
-@MapperScan("com.carbon.mapper")
+@MapperScan(value = {"com.carbon.mapper","com.carbon"})
 @EnableAspectJAutoProxy(exposeProxy = true)
 public class Application {
     public static void main(String[] args) {
