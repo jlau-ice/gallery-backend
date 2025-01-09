@@ -16,6 +16,16 @@ public class ResultUtils {
     }
 
     /**
+     * 成功
+     *
+     * @param <T>  数据类型
+     * @return 响应
+     */
+    public static <T> BaseResponse<T> success() {
+        return new BaseResponse<>(0, null, "ok");
+    }
+
+    /**
      * 失败
      *
      * @param errorCode 错误码

@@ -9,10 +9,12 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://192.168.172.94:3306/galley?useSSL=false&useUnicode=true&characterEncoding=UTF-8&allowPublicKeyRetrieval=true &serverTimezone=GMT%2B8&allowMultiQueries=true
+    username: root
+    password: 5626%%..
 mybatis-plus:
   configuration:
     # 驼峰命名
-    map-underscore-to-camel-case: false
+    map-underscore-to-camel-case: true
     # 日志
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:

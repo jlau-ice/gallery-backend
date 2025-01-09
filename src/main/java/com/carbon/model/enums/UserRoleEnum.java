@@ -1,7 +1,9 @@
 package com.carbon.model.enums;
 
 import cn.hutool.core.util.ObjUtil;
+import lombok.Getter;
 
+@Getter
 public enum UserRoleEnum {
 
     USER("普通用户", "user"),
