@@ -2,9 +2,12 @@ package com.carbon.common;
 
 import lombok.Data;
 
-@Data
-public class PageRequest {
+import java.io.Serializable;
 
+@Data
+public class PageRequest implements Serializable {
+
+    private static final long serialVersionUID = -5505936152143238703L;
     /**
      * 当前页号
      */

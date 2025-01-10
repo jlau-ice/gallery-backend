@@ -11,6 +11,8 @@ public class Constant {
 
     public static final String ADMIN = "admin";
     // endregion
+
+    public static final String DEFAULT_PASSWORD = "12345678";
 }
 
 

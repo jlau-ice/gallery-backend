@@ -1,4 +1,4 @@
-package com.carbon.model.dto;
+package com.carbon.model.dto.user;
 
 import lombok.Data;
 

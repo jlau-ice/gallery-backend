@@ -18,10 +18,10 @@ public class ResultUtils {
     /**
      * 成功
      *
-     * @param <T>  数据类型
+     * @param <String>  数据类型
      * @return 响应
      */
-    public static <T> BaseResponse<T> success() {
+    public static <String> BaseResponse<String> success() {
         return new BaseResponse<>(0, null, "ok");
     }
 

@@ -1,26 +1,37 @@
 package com.carbon.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.carbon.common.Constant;
 import com.carbon.exception.ErrorCode;
 import com.carbon.exception.ThrowUtils;
-import com.carbon.model.dto.UserLoginRequest;
-import com.carbon.model.dto.UserRegisterRequest;
+import com.carbon.mapper.UserMapper;
+import com.carbon.model.dto.user.UserAddRequest;
+import com.carbon.model.dto.user.UserLoginRequest;
+import com.carbon.model.dto.user.UserQueryRequest;
+import com.carbon.model.dto.user.UserRegisterRequest;
 import com.carbon.model.entity.User;
 import com.carbon.model.enums.UserRoleEnum;
 import com.carbon.model.vo.UserLoginVO;
+import com.carbon.model.vo.UserVO;
 import com.carbon.service.UserService;
-import com.carbon.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Administrator
@@ -100,10 +111,30 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
+    public boolean removeUser(Long id) {
+        return this.removeById(id);
+    }
+
+    @Override
     public UserLoginVO getLoginUserVO(User user) {
         UserLoginVO userLoginVO = new UserLoginVO();
         BeanUtil.copyProperties(user, userLoginVO);
         return userLoginVO;
+    }
+
+    @Override
+    public UserVO getUserVO(User user) {
+        UserVO UserVO = new UserVO();
+        BeanUtil.copyProperties(user, UserVO);
+        return UserVO;
+    }
+
+    @Override
+    public List<UserVO> getUserVOList(List<User> userList) {
+        if (CollUtil.isEmpty(userList)) {
+            return Collections.emptyList();
+        }
+        return userList.stream().map(this::getUserVO).collect(Collectors.toList());
     }
 
 
@@ -118,6 +149,57 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         return userAccount + "_" + System.currentTimeMillis();
     }
 
+    @Override
+    public LambdaQueryWrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest) {
+        ThrowUtils.throwIf(userQueryRequest == null, ErrorCode.PARAMS_ERROR,"请求参数为空");
+        Long id = userQueryRequest.getId();
+        String userAccount = userQueryRequest.getUserAccount();
+        String userName = userQueryRequest.getUserName();
+        String userProfile = userQueryRequest.getUserProfile();
+        String userRole = userQueryRequest.getUserRole();
+        String sortField = userQueryRequest.getSortField();
+        String sortOrder = userQueryRequest.getSortOrder();
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(ObjectUtil.isNotEmpty(id), User::getId, id)
+                .eq(StrUtil.isNotBlank(userRole), User::getUserRole, userRole)
+                .like(StrUtil.isNotBlank(userAccount), User::getUserAccount, userAccount)
+                .like(StrUtil.isNotBlank(userName), User::getUserName, userName)
+                .like(StrUtil.isNotBlank(userProfile), User::getUserProfile, userProfile);
+        if (StrUtil.isNotEmpty(sortField)) {
+            if (sortOrder.equals("descend")) {
+                queryWrapper.orderByDesc(getColumn(sortField));
+            } else {
+                queryWrapper.orderByAsc(getColumn(sortField));
+            }
+        }
+        return queryWrapper;
+    }
+
+    @Override
+    public Long addUser(UserAddRequest entity) {
+        User user = new User();
+        BeanUtils.copyProperties(entity, user);
+        user.setUserRole(UserRoleEnum.USER.getValue());
+        user.setUserPassword(this.getEncryptPassword(Constant.DEFAULT_PASSWORD));
+        this.save(user);
+        return user.getId();
+    }
+
+    @Override
+    public UserVO getUserById(Long id) {
+        return this.getUserVO(this.baseMapper.selectById(id));
+    }
+
+
+    private SFunction<User, ?> getColumn(String field) {
+        switch (field) {
+            case "id": return User::getId;
+            case "userAccount": return User::getUserAccount;
+            case "userName": return User::getUserName;
+            case "userProfile": return User::getUserProfile;
+            default: return User::getId; // 默认按ID排序
+        }
+    }
 
 }
 

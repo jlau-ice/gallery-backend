@@ -8,14 +8,10 @@ import java.util.Date;
 @Data
 public class UserLoginVO {
 
-    /**
-     * 账号
-     */
+    /** 账号 */
     private String userAccount;
 
-    /**
-     * 用户昵称
-     */
+    /** 用户昵称 */
     private String userName;
 
     /**
