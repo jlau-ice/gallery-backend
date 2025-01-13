@@ -7,6 +7,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.carbon.common.Constant;
 import com.carbon.exception.ErrorCode;
@@ -186,10 +187,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public UserVO getUserById(Long id) {
+    public UserVO getUserVoById(Long id) {
         return this.getUserVO(this.baseMapper.selectById(id));
     }
 
+    @Override
+    public User getUserById(Long id) {
+        return this.baseMapper.selectById(id);
+    }
+
+    @Override
+    public Page<UserVO> getList(UserQueryRequest entity) {
+        long current = entity.getCurrent();
+        long pageSize = entity.getPageSize();
+        Page<User> userPage = this.page(new Page<>(current, pageSize), this.getQueryWrapper(entity));
+        Page<UserVO> userVOPage = new Page<>(current,pageSize, userPage.getTotal());
+        List<UserVO> userVOList = this.getUserVOList(userPage.getRecords());
+        return userVOPage.setRecords(userVOList);
+    }
 
     private SFunction<User, ?> getColumn(String field) {
         switch (field) {

@@ -1,12 +1,13 @@
 package com.carbon.model.vo;
 
 
-import jdk.nashorn.internal.runtime.Debug;
 import lombok.Data;
 
 import java.util.Date;
 @Data
 public class UserLoginVO {
+
+    private Long id;
 
     /** 账号 */
     private String userAccount;

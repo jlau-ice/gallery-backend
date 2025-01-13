@@ -1,6 +1,7 @@
 package com.carbon.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.carbon.model.dto.user.UserAddRequest;
 import com.carbon.model.dto.user.UserLoginRequest;
 import com.carbon.model.dto.user.UserQueryRequest;
@@ -103,5 +104,9 @@ public interface UserService extends IService<User> {
 
     Long addUser(UserAddRequest entity);
 
-    UserVO getUserById(Long id);
+    UserVO getUserVoById(Long id);
+
+    User getUserById(Long id);
+
+    Page<UserVO> getList(UserQueryRequest entity);
 }

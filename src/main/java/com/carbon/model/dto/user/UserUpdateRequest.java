@@ -8,6 +8,8 @@ import java.io.Serializable;
 public class UserUpdateRequest implements Serializable {
 
     private static final long serialVersionUID = 7758909726256968801L;
+
+    private Long id;
     /**
      * 账号
      */

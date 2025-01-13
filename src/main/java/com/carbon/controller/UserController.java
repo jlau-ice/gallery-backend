@@ -1,20 +1,22 @@
 package com.carbon.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.carbon.annotation.AuthCheck;
 import com.carbon.common.BaseResponse;
 import com.carbon.common.Constant;
 import com.carbon.common.ResultUtils;
-import com.carbon.model.dto.user.UserAddRequest;
-import com.carbon.model.dto.user.UserLoginRequest;
-import com.carbon.model.dto.user.UserRegisterRequest;
+import com.carbon.model.dto.user.*;
 import com.carbon.model.entity.User;
 import com.carbon.model.vo.UserLoginVO;
 import com.carbon.model.vo.UserVO;
 import com.carbon.service.UserService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -29,7 +31,6 @@ public class UserController {
 
 
     @PostMapping("/register")
-    @AuthCheck(mustRole = Constant.ADMIN)
     public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest entity) {
         return ResultUtils.success(userService.userRegister(entity));
     }
@@ -58,14 +59,22 @@ public class UserController {
     }
 
 
+    @GetMapping("/getUserVoById")
+    public BaseResponse<UserVO> getUserVoById(@RequestParam("id") Long id) {
+        return ResultUtils.success(userService.getUserVoById(id));
+    }
+
     @GetMapping("/getUserById")
-    public BaseResponse<UserVO> getUserById(@RequestParam("id") Long id) {
+    @AuthCheck(mustRole = Constant.ADMIN)
+    public BaseResponse<User> getUserById(@RequestParam("id") Long id) {
         return ResultUtils.success(userService.getUserById(id));
     }
 
     @PostMapping("/update")
-    public BaseResponse<String> updateUser(@RequestBody UserRegisterRequest entity) {
-        // todo
+    public BaseResponse<String> updateUser(@RequestBody UserUpdateRequest entity) {
+        User user = new User();
+        BeanUtils.copyProperties(entity, user);
+        userService.updateById(user);
         return ResultUtils.success();
     }
 
@@ -73,6 +82,12 @@ public class UserController {
     @AuthCheck(mustRole = Constant.ADMIN)
     public BaseResponse<Boolean> deleteUser(@RequestParam("id") Long id) {
         return ResultUtils.success(userService.removeUser(id));
+    }
+
+    @PostMapping("/list")
+    @AuthCheck(mustRole = Constant.ADMIN)
+    public BaseResponse<Page<UserVO>> getUserList(@RequestBody UserQueryRequest entity) {
+        return ResultUtils.success(userService.getList(entity));
     }
 
 }
